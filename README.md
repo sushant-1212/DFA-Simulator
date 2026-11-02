@@ -30,8 +30,6 @@ DFA-Simulator/
 │   ├── graph.js            # Interactive SVG renderer with drag & highlights
 │   ├── transitionTable.js  # 2-way synchronized matrix table component
 │   └── main.js             # UI wiring & event controller
-│
-├── M1_DESIGN_REPORT.md     # Official Milestone 1 Submission Report (5 Marks)
 ├── test_dfa.js             # Automated test suite (8 test cases verified)
 └── README.md               # Documentation & quick start guide
 ```
