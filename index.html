@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFA Simulator - Automata Theory Laboratory</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Header & Presets -->
+    <header class="app-header">
+        <div class="header-brand">
+            <div class="brand-icon">⚙️</div>
+            <div>
+                <h1 class="brand-title">DFA Simulator</h1>
+                <p class="brand-subtitle">Formal 5-Tuple Automata Modeler &amp; Step-by-Step Execution Visualizer</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-preset primary-preset" id="btn-load-preset-01">Load: Ends with "01"</button>
+            <button class="btn-preset" id="btn-load-preset-even">Load: Even '0's</button>
+            <button class="btn-preset" id="btn-clear-dfa">Clear Automaton</button>
+        </div>
+    </header>
+
+    <!-- Main Workspace (3-Column Layout) -->
+    <main class="app-container">
+
+        <!-- Column 1: DFA Configuration -->
+        <section class="panel panel-config">
+            <div class="panel-header">
+                <h2 class="panel-title"><span>📐</span> DFA Configuration</h2>
+                <span style="font-size: 0.75rem; color: var(--secondary);">M = (Q, Σ, δ, q₀, F)</span>
+            </div>
+            <div class="panel-body">
+
+                <!-- States Management (Q) -->
+                <div class="section-box">
+                    <div class="section-label">
+                        <span>1. States (Q)</span>
+                        <span id="state-count-badge" style="font-size: 0.75rem; color: var(--secondary); font-weight: normal;">0 states</span>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="input-new-state" class="input-text" placeholder="e.g. q0, q1..." maxlength="10">
+                        <button id="btn-add-state" class="btn-sm btn-primary-sm">+ Add</button>
+                    </div>
+                    <div class="state-chips-container" id="states-chips-list">
+                        <!-- State tags rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Alphabet Management (Sigma) -->
+                <div class="section-box">
+                    <div class="section-label">
+                        <span>2. Alphabet (Σ)</span>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="input-alphabet" class="input-text" placeholder="e.g. 0, 1 or a, b" value="0, 1">
+                        <button id="btn-update-alphabet" class="btn-sm">Set</button>
+                    </div>
+                    <p style="font-size: 0.725rem; color: var(--text-muted); margin-top: 0.35rem;">Comma separated individual symbols.</p>
+                </div>
+
+                <!-- Initial State (q0) -->
+                <div class="section-box">
+                    <div class="section-label">
+                        <span>3. Initial State (q₀)</span>
+                    </div>
+                    <select id="select-initial-state" class="select-full">
+                        <option value="">— select start state —</option>
+                    </select>
+                </div>
+
+                <!-- Final / Accepting States (F) -->
+                <div class="section-box">
+                    <div class="section-label">
+                        <span>4. Final / Accepting States (F)</span>
+                    </div>
+                    <div id="final-states-checkboxes" style="display: flex; flex-direction: column; gap: 0.35rem; max-height: 100px; overflow-y: auto;">
+                        <!-- Checkboxes for F -->
+                    </div>
+                </div>
+
+                <!-- Visual Transition Creator -->
+                <div class="section-box">
+                    <div class="section-label">
+                        <span>5. Add / Edit Transition (δ)</span>
+                    </div>
+                    <div class="transition-form-grid">
+                        <select id="trans-from" title="Source State"></select>
+                        <select id="trans-symbol" title="Alphabet Symbol"></select>
+                        <select id="trans-to" title="Target State"></select>
+                    </div>
+                    <button id="btn-save-transition" class="btn-sm btn-primary-sm" style="width: 100%;">Set Transition</button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Column 2: Graph Diagram & Synchronized Transition Table -->
+        <section class="panel panel-visualization">
+            <div class="panel-header">
+                <h2 class="panel-title"><span>📊</span> State Diagram &amp; Transition Table</h2>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn-tool" id="btn-auto-layout" title="Rearrange nodes neatly">Auto Layout</button>
+                    <button class="btn-tool" id="btn-validate-dfa" title="Check DFA completeness">Validate</button>
+                </div>
+            </div>
+            <div class="panel-body">
+
+                <!-- Validation Status Notification Banner -->
+                <div id="validation-alert" class="validation-box">
+                    <div id="validation-message"></div>
+                </div>
+
+                <!-- SVG State Diagram Canvas -->
+                <div class="graph-container">
+                    <div class="canvas-toolbar">
+                        <span style="font-size: 0.725rem; color: var(--text-muted); padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.7); border-radius: 4px;">
+                            💡 Tip: Click &amp; drag circles to reposition
+                        </span>
+                    </div>
+                    <svg id="dfa-svg"></svg>
+                </div>
+
+                <!-- Synchronized Transition Table -->
+                <div class="section-box" style="margin-top: 0.25rem;">
+                    <div class="section-label">
+                        <span>Synchronized Transition Table (δ : Q × Σ → Q)</span>
+                        <span style="font-size: 0.725rem; text-transform: none; color: var(--secondary);">Changes sync directly with graph</span>
+                    </div>
+                    <div class="table-wrapper" id="transition-table-container">
+                        <!-- Table matrix rendered here -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Column 3: Simulation & Execution Trace -->
+        <section class="panel panel-simulation">
+            <div class="panel-header">
+                <h2 class="panel-title"><span>▶️</span> String Simulation</h2>
+                <span id="sim-status-pill" style="font-size: 0.75rem; color: var(--secondary);">Idle</span>
+            </div>
+            <div class="panel-body">
+
+                <!-- Input String Form -->
+                <div class="section-box">
+                    <div class="section-label">
+                        <span>Input String (w)</span>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="input-string" class="input-text" placeholder="e.g. 1101" value="1101" spellcheck="false">
+                        <button id="btn-init-sim" class="btn-sm btn-primary-sm">Load</button>
+                    </div>
+                    <div id="input-alphabet-hint" style="font-size: 0.725rem; color: var(--text-muted); margin-top: 0.35rem;">
+                        Alphabet: { 0, 1 }
+                    </div>
+                </div>
+
+                <!-- Simulation Controls -->
+                <div class="sim-controls-grid">
+                    <button id="btn-run-all" class="btn-sim btn-run">▶ Run All</button>
+                    <button id="btn-step" class="btn-sim btn-step">⏭ Next Step</button>
+                    <button id="btn-reset-sim" class="btn-sim">↺ Reset</button>
+                </div>
+
+                <!-- Result Banner -->
+                <div id="result-banner" class="status-banner">
+                    <!-- ACCEPTED / REJECTED will be injected here -->
+                </div>
+
+                <!-- Execution Step Trace -->
+                <div class="section-box" style="flex: 1; display: flex; flex-direction: column;">
+                    <div class="section-label">
+                        <span>Step Execution Trace</span>
+                    </div>
+                    <div class="trace-table-wrapper" id="trace-container">
+                        <table class="trace-table">
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>Symbol</th>
+                                    <th>From</th>
+                                    <th>To State</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trace-table-body">
+                                <tr>
+                                    <td colspan="4" class="empty-trace-msg">Click "Load" and then "Next Step" or "Run All" to observe execution.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- App Footer -->
+    <footer class="app-footer">
+        <div>DFA Simulator — Computer Science Automata Theory Laboratory (Milestone 1)</div>
+        <div>Standard: Complete Deterministic Finite Automaton (Q, Σ, δ, q₀, F)</div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/dfa.js"></script>
+    <script src="js/validator.js"></script>
+    <script src="js/simulator.js"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/transitionTable.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
