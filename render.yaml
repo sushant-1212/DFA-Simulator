@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: dfa-simulator
+    env: static
+    buildCommand: ""
+    staticPublishPath: .
