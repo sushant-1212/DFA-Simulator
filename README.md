@@ -1,5 +1,8 @@
 # ⚙️ DFA Simulator (Milestone-II)
 
+**Group ID:** [TO BE FILLED]  |  **Course:** CSET302 – Automata Theory and Computability, Bennett University  
+**Live demo:** https://dfa-simulator.onrender.com/
+
 A clean, zero-dependency educational web application for designing, visualizing, and simulating complete Deterministic Finite Automata (DFA) based on formal automata theory.
 
 ---
@@ -13,22 +16,26 @@ The **DFA Simulator** bridges theoretical automata concepts with concrete comput
 ## Supported Features
 
 - **Central Formal Model:** Strict adherence to the standard 5-tuple definition $M = (Q, \Sigma, \delta, q_0, F)$.
-- **Dual Input Modalities:** Construct automata either visually on an SVG graph or numerically via an interactive transition matrix.
-- **Two-Way Synchronization:** Real-time synchronization between the transition table and state diagram; modifying a transition dropdown immediately updates the graph edge and vice versa.
+- **Form and table editing:** define $\delta$ through the 'Add / Edit Transition' form or the drop-down cells of the transition table. The diagram, the table and the validation banner are all rendered from one DFA model, so they never disagree.
 - **Formal DFA Completeness Validation:** Enforces the total function property $\delta : Q \times \Sigma \to Q$. Clearly lists any missing transitions before simulation.
 - **Granular Step-by-Step Simulation:** Step forward one symbol at a time or run the full string automatically, highlighting active nodes, traversed edges, and recording each step in an execution trace table.
-- **Interactive SVG Canvas:** Clean circular nodes, double circles for accepting states, incoming start arrows, curved paths for bidirectional transitions, self-loops, and draggable node repositioning.
+- **Interactive SVG diagram:** circular nodes, double circles for accepting states, a start arrow, self-loops, curved edges for opposite-direction pairs, draggable nodes and an Auto Layout button. Clicking a node pre-selects it as the source state in the transition form.
 - **Pre-configured Presets:** One-click loading of classic automata examples (e.g., binary strings ending in "01", strings with an even number of '0's).
 
 ---
 
-## Technology Stack
+## Technology Stack and Dependencies
 
 - **HTML5:** Semantic document structure and 3-column workbench interface.
-- **CSS3:** Responsive layout, clean typography, color-coded node states, and animations.
+- **CSS3:** Responsive layout, clean typography, and color-coded node states.
 - **JavaScript (ES6+):** Pure client-side automata data structures, validation rules, simulation stepper, and event wiring.
 - **Native SVG:** Scalable vector graphics for rendering states, directed edges, arrowhead markers, and dynamic drag interactions.
 - **Dependencies:** None (zero external libraries, no frameworks, no build tools).
+
+### Requirements
+- **Browser:** Any modern browser (screenshots taken in Google Chrome).
+- **Node.js:** Only for running tests (tested with Node.js v20.18.0).
+- No npm packages, no build step.
 
 ---
 
@@ -47,6 +54,8 @@ No package installations (`npm install`), compilers, or bundlers are required.
 
 ## How to Run
 
+Hosted copy: https://dfa-simulator.onrender.com/
+
 You can run the application directly in any modern web browser:
 
 ### Option 1: Open directly in your browser
@@ -60,11 +69,7 @@ xdg-open index.html
 ```
 
 ### Option 2: Serve using any static HTTP server
-If you prefer running a local HTTP server:
-```bash
-npx serve .
-```
-or with Python:
+If you prefer running a local HTTP server with Python:
 ```bash
 python3 -m http.server 8000
 ```
@@ -119,6 +124,7 @@ DFA-Simulator/
 │   ├── transitionTable.js  # Two-way synchronized transition matrix component
 │   └── main.js             # Application controller and UI event listeners
 ├── TestCases/
+│   ├── exhaustive_check.js # compares both presets with reference predicates on all 8,191 binary strings of length 0–12
 │   └── test_suite.js       # Comprehensive automated test suite
 ├── test_dfa.js             # Root test runner using dynamic path resolution
 ├── render.yaml             # Render static site deployment configuration
@@ -194,6 +200,15 @@ TOTAL TESTS: 28 | PASSED: 28 | FAILED: 0
 ✅ ALL AUTOMATED TESTS PASSED SUCCESSFULLY!
 ```
 
+Exhaustive cross-check: `node TestCases/exhaustive_check.js`
+
+Expected output:
+```
+ends-with-01: 8191 strings (|w| <= 12), mismatches = 0
+even-zeros: 8191 strings (|w| <= 12), mismatches = 0
+RESULT: all verdicts agree with the reference predicates
+```
+
 ---
 
 ## Known Limitations
@@ -202,6 +217,23 @@ TOTAL TESTS: 28 | PASSED: 28 | FAILED: 0
 2. **$\varepsilon$ (epsilon) input:** The empty string ($\varepsilon$) is represented by passing an empty input `""`. It is evaluated immediately against the start state $q_0$ without traversing transitions.
 3. **Single-character symbols only:** Input string validation operates on a per-character basis. All alphabet symbols must be individual characters (e.g., `0`, `1` or `a`, `b`). Entering symbols longer than 1 character is rejected.
 4. **Whitespace is trimmed:** Leading, trailing, and comma-delimited whitespace is automatically trimmed from state identifiers and alphabet inputs.
+5. **Press Load after changing the input string:** Run All / Next Step / Reset may reuse the previously loaded string.
+6. **Validator warnings (e.g. empty $F$, so every string is rejected) are computed but not displayed in the interface.**
+7. **No save / load / export:** reloading the page restores the default preset.
+8. **DFA only:** no NFA, $\varepsilon$-NFA, minimization, equivalence checking or conversions; no batch testing of many strings.
+9. **Single-character check for alphabet symbols is applied in the interface layer, not in `DFA.setAlphabet`.**
+10. **State names are inserted with innerHTML without escaping.**
+11. **Some interface behaviours (dragging, Auto Layout, narrow screens, Firefox/Edge) have not yet been verified by manual tests.**
+
+---
+
+## Troubleshooting
+
+- **Blank page or buttons do nothing:** Open the browser console; open `index.html` from the repo root so all six scripts in `js/` load.
+- **"Incomplete DFA" banner:** Fill every $\delta(q, a)$ in the transition table; the banner lists each missing pair.
+- **Old verdict still shown:** Press Load after changing the input string.
+- **`node: command not found`:** Install Node.js (needed only for tests).
+- **Tests fail with a path error:** Run commands from the repository root.
 
 ---
 
@@ -209,6 +241,12 @@ TOTAL TESTS: 28 | PASSED: 28 | FAILED: 0
 
 | Member (ID) | Main Responsibilities |
 | :--- | :--- |
-| **Sushant Feria** (S24CSEU2389) | Project lead. Overall design and the automata logic (DFA model, validator, simulator); integration of the interface; automated tests; deployment on Render; preparation of this report and the README. |
+| **Sushant Feria** (S24CSEU2389) | Project lead. Overall design and the automata logic (DFA model, validator, simulator); integration of the interface; automated tests; deployment on Render; preparation of the Milestone-II report and this README. |
 | **Bharat Madan** (S24CSEU2405) | Full-stack and code side: interface components and controller wiring (page structure, diagram and transition-table views, event handling); code review and fixes. |
 | **Abhay Modanwal** (S24CSEU2399) | Supporting work: interface testing and screenshots, example automata and test strings, review of documentation. |
+
+---
+
+## Acknowledgements
+
+Faculty: Chanchal Maurya. Hosting: Render (static site). Tests: Node.js. No external JavaScript or CSS libraries are used; system fonts only.
