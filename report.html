@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Milestone-II Design Report - DFA Simulator</title>
+<style>
+    @page {
+        size: A4;
+        margin: 20mm 18mm 20mm 18mm;
+    }
+    body {
+        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #1e293b;
+        line-height: 1.55;
+        font-size: 10pt;
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+    }
+    .header-box {
+        border-bottom: 2px solid #2563eb;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+    }
+    .header-title {
+        font-size: 20pt;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+    }
+    .header-sub {
+        font-size: 11pt;
+        color: #475569;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    .meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        font-size: 9pt;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin-top: 10px;
+    }
+    .meta-item strong {
+        color: #334155;
+    }
+    h2 {
+        font-size: 13pt;
+        color: #1e3a8a;
+        border-left: 4px solid #2563eb;
+        padding-left: 8px;
+        margin-top: 24px;
+        margin-bottom: 10px;
+        page-break-after: avoid;
+    }
+    h3 {
+        font-size: 11pt;
+        color: #334155;
+        margin-top: 14px;
+        margin-bottom: 6px;
+        page-break-after: avoid;
+    }
+    p, ul, ol {
+        margin-top: 4px;
+        margin-bottom: 8px;
+    }
+    ul, ol {
+        padding-left: 20px;
+    }
+    li {
+        margin-bottom: 3px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+        font-size: 9pt;
+        page-break-inside: avoid;
+    }
+    th, td {
+        border: 1px solid #cbd5e1;
+        padding: 7px 10px;
+        text-align: left;
+    }
+    th {
+        background-color: #f1f5f9;
+        font-weight: 700;
+        color: #1e293b;
+    }
+    tr:nth-child(even) td {
+        background-color: #f8fafc;
+    }
+    .status-pass {
+        color: #059669;
+        font-weight: bold;
+    }
+    pre {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 10px 14px;
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 8.5pt;
+        line-height: 1.45;
+        overflow-x: auto;
+        page-break-inside: avoid;
+    }
+    code {
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 9pt;
+        background: #f1f5f9;
+        padding: 1px 4px;
+        border-radius: 3px;
+    }
+    .page-break {
+        page-break-after: always;
+    }
+    .box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin: 12px 0;
+    }
+    .diagram-container {
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 12px;
+        background: #ffffff;
+        text-align: center;
+        margin: 12px 0;
+        page-break-inside: avoid;
+    }
+</style>
+</head>
+<body>
+
+<div class="header-box">
+    <div class="header-title">Automata Simulator Design (Milestone-II)</div>
+    <div class="header-sub">Problem Analysis, System Specification &amp; Architectural Design</div>
+    <div class="meta-grid">
+        <div class="meta-item"><strong>Course:</strong> Theory of Automata and Formal Languages</div>
+        <div class="meta-item"><strong>Evaluation Window:</strong> 2 – 6 November 2026</div>
+        <div class="meta-item"><strong>Weightage:</strong> Milestone-II (5 Marks)</div>
+        <div class="meta-item"><strong>Automata Model:</strong> Complete Deterministic Finite Automaton (DFA)</div>
+        <div class="meta-item"><strong>Live Web Simulator:</strong> https://dfa-simulator.onrender.com</div>
+        <div class="meta-item"><strong>GitHub Repository:</strong> https://github.com/sushant-1212/DFA-Simulator</div>
+    </div>
+</div>
+
+<h2>Evaluation Rubric Summary (5 Marks)</h2>
+<table>
+    <thead>
+        <tr>
+            <th style="width: 28%;">Criterion</th>
+            <th style="width: 12%;">Marks</th>
+            <th>Expected Evidence &amp; Deliverables</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>1. Problem Definition &amp; Specification</strong></td>
+            <td><strong>1 Mark</strong></td>
+            <td>Problem, objective, inputs/outputs, formal 5-tuple model specification.</td>
+        </tr>
+        <tr>
+            <td><strong>2. Existing Tools &amp; Feasibility</strong></td>
+            <td><strong>1 Mark</strong></td>
+            <td>Tool review (JFLAP, web simulators), limitations, and feasibility analysis.</td>
+        </tr>
+        <tr>
+            <td><strong>3. Simulator Design &amp; Methodology</strong></td>
+            <td><strong>2 Marks</strong></td>
+            <td>4-Layer architecture, system flowchart, UML diagram, modules, UI mockup &amp; IPO workflow.</td>
+        </tr>
+        <tr>
+            <td><strong>4. Algorithm Selection &amp; Correctness</strong></td>
+            <td><strong>1 Mark</strong></td>
+            <td>Algorithms/pseudocode with explanation, complexity, and manually validated example.</td>
+        </tr>
+        <tr>
+            <td><strong>Total</strong></td>
+            <td><strong>5 Marks</strong></td>
+            <td><strong>Preliminary prototype fully implemented and deployed.</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>1. Criterion 1: Problem Definition &amp; Automata Specification (1 Mark)</h2>
+
+<h3>1.1 Problem Statement</h3>
+<p>
+Formal Language and Automata Theory is a foundational core of theoretical computer science. However, students frequently struggle to connect abstract mathematical definitions—such as state tuples, transition functions (&delta;), and instantaneous configurations—with concrete algorithmic processes. Traditional teaching relies on static blackboard diagrams and manual pen-and-paper tracing, which is labor-intensive and prone to calculation error.
+</p>
+<p>
+Furthermore, existing desktop software (such as JFLAP) relies on outdated Java runtimes, possesses complex interfaces, and lacks modern bidirectional synchronization between transition tables and state diagrams.
+</p>
+
+<h3>1.2 Project Objectives</h3>
+<ul>
+    <li><strong>Zero-Installation Accessibility:</strong> Develop a clean, client-side web application running natively in modern browsers.</li>
+    <li><strong>Dual Synchronized Input Modalities:</strong> Allow students to construct automata visually on an SVG canvas or numerically via a synchronized matrix transition table.</li>
+    <li><strong>Strict Formal Validation:</strong> Enforce complete DFA properties (&delta; as a total function) and explicitly highlight any missing transitions &delta;(q, a).</li>
+    <li><strong>Granular Step-by-Step Visualization:</strong> Provide interactive stepping with node and edge highlights, accompanied by an instantaneous execution trace log.</li>
+</ul>
+
+<h3>1.3 System Inputs &amp; Outputs</h3>
+<ul>
+    <li><strong>Inputs:</strong> State set Q, input alphabet &Sigma;, unique initial state q<sub>0</sub>, accepting state set F, transition mappings &delta;: Q &times; &Sigma; &rarr; Q, and user string w &isin; &Sigma;*.</li>
+    <li><strong>Outputs:</strong> Dynamic SVG state diagram, synchronized transition table, validation error list, real-time node/edge highlights, and execution decision (ACCEPTED, REJECTED, or INVALID INPUT).</li>
+</ul>
+
+<h3>1.4 Formal Automata Specification (5-Tuple)</h3>
+<p>A Deterministic Finite Automaton (DFA) is formally defined as a 5-tuple:</p>
+<div class="box" style="text-align: center; font-size: 11pt; font-weight: bold;">
+    M = (Q, &Sigma;, &delta;, q<sub>0</sub>, F)
+</div>
+<ol>
+    <li><strong>Q:</strong> A finite, non-empty set of internal states: Q = {q<sub>0</sub>, q<sub>1</sub>, ..., q<sub>n-1</sub>}.</li>
+    <li><strong>&Sigma;:</strong> A finite, non-empty set of input symbols (the alphabet).</li>
+    <li><strong>&delta;:</strong> The state transition function, defined as a total function mapping:
+        <br><code>&delta; : Q &times; &Sigma; &rarr; Q</code>
+        <br>In a complete DFA, for every state q &isin; Q and every symbol a &isin; &Sigma;, there exists exactly one deterministic target state p &isin; Q.
+    </li>
+    <li><strong>q<sub>0</sub> &isin; Q:</strong> The unique designated start (initial) state.</li>
+    <li><strong>F &sube; Q:</strong> The set of final (accepting) states.</li>
+</ol>
+<p><strong>Extended Transition Function (&delta;&#770;):</strong></p>
+<ul>
+    <li>Base condition: &delta;&#770;(q, &epsilon;) = q (where &epsilon; is the empty string)</li>
+    <li>Recursive step: &delta;&#770;(q, wa) = &delta;(&delta;&#770;(q, w), a) for all w &isin; &Sigma;* and a &isin; &Sigma;</li>
+</ul>
+<p>A string w &isin; &Sigma;* is <strong>accepted</strong> if and only if &delta;&#770;(q<sub>0</sub>, w) &isin; F; otherwise, it is <strong>rejected</strong>.</p>
+
+<div class="page-break"></div>
+
+<h2>2. Criterion 2: Existing Tools &amp; Feasibility Analysis (1 Mark)</h2>
+
+<h3>2.1 Existing Tools Review &amp; Limitations</h3>
+<table>
+    <thead>
+        <tr>
+            <th style="width: 25%;">Tool Name</th>
+            <th style="width: 20%;">Environment</th>
+            <th style="width: 25%;">Strengths</th>
+            <th>Limitations &amp; Drawbacks</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>JFLAP</strong></td>
+            <td>Java Desktop App</td>
+            <td>Supports DFA, NFA, PDA, Turing Machines.</td>
+            <td>Requires local Java JRE; dated 1990s UI; non-responsive on high-DPI screens; no bidirectional table synchronization.</td>
+        </tr>
+        <tr>
+            <td><strong>Automata Simulator</strong></td>
+            <td>Web (HTML/JS)</td>
+            <td>In-browser execution.</td>
+            <td>Does not support synchronized transition table editing; often silently treats missing transitions as rejects rather than validating completeness.</td>
+        </tr>
+        <tr>
+            <td><strong>Cyberzhg Automata</strong></td>
+            <td>Web / Canvas</td>
+            <td>Fast conversions between NFA and DFA.</td>
+            <td>Complex drawing interface; lacks structured step-by-step trace logging for classroom teaching.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>2.2 Feasibility Analysis</h3>
+<ul>
+    <li><strong>Technical Feasibility:</strong> The simulator is constructed using standard HTML5, CSS3, ES6 JavaScript, and native SVG. It operates entirely on the client side with <strong>zero external dependencies</strong> (no React, jQuery, or D3 required), ensuring ultra-fast load times and complete independence from server availability.</li>
+    <li><strong>Operational Feasibility:</strong> Operates directly in any modern browser across Windows, macOS, Linux, and mobile devices without installation or administrative permissions.</li>
+    <li><strong>Educational Feasibility:</strong> The interface directly follows standard university curriculum patterns, displaying the 5-tuple, state diagram, and transition matrix simultaneously.</li>
+</ul>
+
+<h2>3. Criterion 3: Simulator Design &amp; Methodology (2 Marks)</h2>
+
+<h3>3.1 Four-Layer System Architecture</h3>
+<pre>
++-----------------------------------------------------------------------------------------+
+| 1. Presentation Layer (UI)                                                              |
+|    - 3-Column Responsive Workbench                                                      |
+|    - Interactive SVG State Diagram (Draggable circles, curved arrows, self-loops)       |
+|    - Synchronized Transition Matrix Table (Standard -> and * notations)                 |
+|    - Simulation Stepping Controls & Instantaneous Trace Table                           |
++-----------------------------------------------------------------------------------------+
+                                             |
+                                             v
++-----------------------------------------------------------------------------------------+
+| 2. DFA Management Layer (dfa.js)                                                        |
+|    - Central Data Model: M = (Q, Sigma, delta, q0, F)                                   |
+|    - Dynamic State Addition, Deletion & Renaming                                        |
+|    - Geometric Auto-Layout Node Coordinate Calculator                                   |
++-----------------------------------------------------------------------------------------+
+                                             |
+                                             v
++-----------------------------------------------------------------------------------------+
+| 3. Validation & Simulation Layer (validator.js & simulator.js)                          |
+|    - Completeness Checker (Verifies total function delta: Q x Sigma -> Q)               |
+|    - Input String Membership Verifier (w in Sigma*)                                     |
+|    - Deterministic Stepping Engine & Step Trace Logger                                  |
++-----------------------------------------------------------------------------------------+
+                                             |
+                                             v
++-----------------------------------------------------------------------------------------+
+| 4. Output & Visual Feedback Layer (graph.js, transitionTable.js)                        |
+|    - Dynamic State Glow (Blue = Active, Green = Accepted, Red = Rejected)              |
+|    - Animated Directed Arrow Highlighting                                               |
+|    - Real-Time Execution Trace Table Log Updates                                        |
++-----------------------------------------------------------------------------------------+
+</pre>
+
+<h3>3.2 Input-Processing-Output (IPO) Workflow</h3>
+<ul>
+    <li><strong>Input:</strong> User specifies Q, &Sigma;, q<sub>0</sub>, F, transitions &delta; (via table or visual selector), and candidate string w.</li>
+    <li><strong>Processing:</strong>
+        <ol>
+            <li><em>Model Validation:</em> Check that every (q, a) has an explicit target in Q.</li>
+            <li><em>Input Validation:</em> Verify every character in w belongs to &Sigma;.</li>
+            <li><em>Simulation Loop:</em> Start at q = q<sub>0</sub>. For each symbol a &isin; w, compute q &larr; &delta;(q, a), log step to history, and highlight active SVG nodes/edges.</li>
+            <li><em>Acceptance Check:</em> If terminal state q &isin; F, string is ACCEPTED; else REJECTED.</li>
+        </ol>
+    </li>
+    <li><strong>Output:</strong> Highlighted SVG graph, line-by-line execution trace table, and acceptance result banner.</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h3>3.3 System Flowchart</h3>
+<pre>
+  [Start] 
+     |
+     v
+[Configure Q, Sigma, q0, F]
+     |
+     v
+[Define Transitions delta (Table or Graph)]
+     |
+     v
+[Validate DFA Completeness] 
+     |---> (Incomplete / Missing Transitions) ---> [Display Error Alert & Return]
+     |
+     v (Valid)
+[Input String w]
+     |---> (Contains invalid characters not in Sigma) ---> [Display Invalid Input Alert]
+     |
+     v (Valid Input)
+[Initialize: CurrentState = q0, Step = 0]
+     |
+     +<------------------------------------+
+     |                                     |
+[Remaining Symbols in w?]                  |
+     | (Yes)                               |
+     v                                     |
+[Read Next Symbol a]                       |
+     |                                     |
+[Compute NextState = delta(CurrentState, a)]
+     |                                     |
+[Highlight Active Node & Arrow in SVG]     |
+     |                                     |
+[Append Step to Execution Trace Table]     |
+     |                                     |
+[CurrentState = NextState] ----------------+
+     |
+     v (No more symbols)
+[Is CurrentState in F?]
+     |
+     +---- (Yes) ----> [Display ACCEPTED Banner (Green)]
+     |
+     +---- (No)  ----> [Display REJECTED Banner (Red)]
+     |
+     v
+   [End]
+</pre>
+
+<h3>3.4 UI Mockup &amp; Synchronized Workbench Design</h3>
+<p>The simulator interface is organized into three balanced laboratory columns:</p>
+<table>
+    <thead>
+        <tr>
+            <th style="width: 30%;">Column A: Configuration</th>
+            <th style="width: 45%;">Column B: Visualization &amp; Sync Table</th>
+            <th style="width: 25%;">Column C: Simulation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                &bull; States (Q) Manager with chips<br>
+                &bull; Alphabet (&Sigma;) input<br>
+                &bull; Initial State (q<sub>0</sub>) picker<br>
+                &bull; Final States (F) checklist<br>
+                &bull; Quick Transition Creator
+            </td>
+            <td>
+                &bull; <strong>SVG Graph:</strong> Draggable circles, double circles for final states, start arrow indicator.<br>
+                &bull; <strong>Synchronized Table:</strong> Standard &rarr; and * notations; changing dropdown values immediately updates SVG arrows in real-time.
+            </td>
+            <td>
+                &bull; Input String field<br>
+                &bull; Run All / Next Step / Reset<br>
+                &bull; ACCEPTED / REJECTED Badge<br>
+                &bull; Step-by-Step Trace Table
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>4. Criterion 4: Algorithm Selection &amp; Correctness (1 Mark)</h2>
+
+<h3>4.1 DFA Completeness Validation Algorithm</h3>
+<pre>
+ALGORITHM ValidateDFA(Q, Sigma, delta, q0, F):
+    errors = []
+    IF |Q| == 0 THEN APPEND "State set Q cannot be empty" TO errors
+    IF |Sigma| == 0 THEN APPEND "Alphabet Sigma cannot be empty" TO errors
+    IF q0 is NULL OR q0 NOT IN Q THEN APPEND "Invalid initial state" TO errors
+    
+    FOR EACH f IN F:
+        IF f NOT IN Q THEN APPEND "Final state not in Q" TO errors
+
+    FOR EACH state q IN Q:
+        FOR EACH symbol a IN Sigma:
+            dest = delta(q, a)
+            IF dest is NULL THEN
+                APPEND "Missing transition delta(q, a)" TO errors
+            ELSE IF dest NOT IN Q THEN
+                APPEND "Transition points to nonexistent state" TO errors
+
+    RETURN { isValid: (|errors| == 0), errors: errors }
+</pre>
+
+<div class="page-break"></div>
+
+<h3>4.2 Deterministic Simulation Algorithm</h3>
+<pre>
+ALGORITHM SimulateDFA(M, inputString w):
+    FOR EACH character ch IN w:
+        IF ch NOT IN Sigma THEN RETURN ERROR("Invalid character not in alphabet")
+
+    currentState = q0
+    history = [ { step: 0, symbol: "—", state: currentState } ]
+
+    FOR i = 0 TO length(w) - 1:
+        sym = w[i]
+        nextState = delta(currentState, sym)
+        history.append({ step: i + 1, symbol: sym, from: currentState, to: nextState })
+        currentState = nextState
+
+    IF currentState IN F THEN
+        RETURN { status: "ACCEPTED", history: history }
+    ELSE
+        RETURN { status: "REJECTED", history: history }
+</pre>
+
+<h3>4.3 Computational Complexity</h3>
+<ul>
+    <li><strong>Time Complexity:</strong>
+        <ul>
+            <li><em>Validation:</em> O(|Q| &middot; |&Sigma;|) &mdash; verifies each cell in the transition matrix exactly once.</li>
+            <li><em>Simulation:</em> O(|w|) &mdash; looking up &delta;(q, a) in JavaScript hash map is O(1) constant time per character, yielding strictly linear time in string length.</li>
+        </ul>
+    </li>
+    <li><strong>Space Complexity:</strong> O(|Q| &middot; |&Sigma;|) to store the transition model, and O(|w|) auxiliary space for the step execution trace table.</li>
+</ul>
+
+<h3>4.4 Manually Solved Validation Example</h3>
+<p><strong>Language:</strong> Binary strings over &Sigma; = {0, 1} ending with the substring <code>01</code>.</p>
+<p><strong>Formal Specification:</strong> Q = {q<sub>0</sub>, q<sub>1</sub>, q<sub>2</sub>}, &Sigma; = {0, 1}, Start State = q<sub>0</sub>, F = {q<sub>2</sub>}.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>State (Q)</th>
+            <th>Input '0'</th>
+            <th>Input '1'</th>
+            <th>State Role in Language Recognition</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>&rarr; q<sub>0</sub></td>
+            <td>q<sub>1</sub></td>
+            <td>q<sub>0</sub></td>
+            <td>Start state; reset state when trailing symbol is '1'.</td>
+        </tr>
+        <tr>
+            <td>q<sub>1</sub></td>
+            <td>q<sub>1</sub></td>
+            <td>q<sub>2</sub></td>
+            <td>Recognized trailing '0'; candidate for "01".</td>
+        </tr>
+        <tr>
+            <td>* q<sub>2</sub></td>
+            <td>q<sub>1</sub></td>
+            <td>q<sub>0</sub></td>
+            <td>Accepting state; string successfully ends with "01".</td>
+        </tr>
+    </tbody>
+</table>
+
+<p><strong>Manual Trace for Input String w = 1101:</strong></p>
+<ol>
+    <li>Start at q<sub>0</sub>: Configuration (q<sub>0</sub>, 1101)</li>
+    <li>Read '1': &delta;(q<sub>0</sub>, 1) = q<sub>0</sub> &rArr; Configuration (q<sub>0</sub>, 101)</li>
+    <li>Read '1': &delta;(q<sub>0</sub>, 1) = q<sub>0</sub> &rArr; Configuration (q<sub>0</sub>, 01)</li>
+    <li>Read '0': &delta;(q<sub>0</sub>, 0) = q<sub>1</sub> &rArr; Configuration (q<sub>1</sub>, 1)</li>
+    <li>Read '1': &delta;(q<sub>1</sub>, 1) = q<sub>2</sub> &rArr; Configuration (q<sub>2</sub>, &epsilon;)</li>
+    <li>String completely consumed. Current state is q<sub>2</sub> &isin; F. Result: <strong>ACCEPTED</strong>.</li>
+</ol>
+
+<h3>4.5 Automated Verification Test Suite</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Test ID</th>
+            <th>Input (w)</th>
+            <th>Theoretical Justification</th>
+            <th>Expected Output</th>
+            <th>Simulator Output</th>
+            <th>Verification Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td><code>1101</code></td>
+            <td>Suffix matches "01"</td>
+            <td>ACCEPTED</td>
+            <td>ACCEPTED</td>
+            <td class="status-pass">PASS &check;</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td><code>1010</code></td>
+            <td>Suffix is "10"</td>
+            <td>REJECTED</td>
+            <td>REJECTED</td>
+            <td class="status-pass">PASS &check;</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td><code>01</code></td>
+            <td>Exact match for "01"</td>
+            <td>ACCEPTED</td>
+            <td>ACCEPTED</td>
+            <td class="status-pass">PASS &check;</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td><code>1111</code></td>
+            <td>Contains no '0'</td>
+            <td>REJECTED</td>
+            <td>REJECTED</td>
+            <td class="status-pass">PASS &check;</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td><code>0001</code></td>
+            <td>Multiple leading zeros ending in "01"</td>
+            <td>ACCEPTED</td>
+            <td>ACCEPTED</td>
+            <td class="status-pass">PASS &check;</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td><code>""</code> (empty)</td>
+            <td>Length 0, halts at q<sub>0</sub> &notin; F</td>
+            <td>REJECTED</td>
+            <td>REJECTED</td>
+            <td class="status-pass">PASS &check;</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td><code>1021</code></td>
+            <td>Symbol '2' &notin; &Sigma;</td>
+            <td>INVALID INPUT</td>
+            <td>ERROR</td>
+            <td class="status-pass">PASS &check;</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td><code>101</code></td>
+            <td>Suffix matches "01"</td>
+            <td>ACCEPTED</td>
+            <td>ACCEPTED</td>
+            <td class="status-pass">PASS &check;</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
