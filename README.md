@@ -9,7 +9,7 @@ A clean, zero-dependency educational web application for designing, visualizing,
 
 ## Overview
 
-The **DFA Simulator** bridges theoretical automata concepts with concrete computational visualization. Built around the mathematical 5-tuple $M = (Q, \Sigma, \delta, q_0, F)$, it provides an interactive environment where students and instructors can construct state diagrams, edit transition matrices, and inspect deterministic string processing step-by-step.
+The **DFA Simulator** bridges theoretical automata concepts with concrete computational visualization. Built around the mathematical 5-tuple $M = (Q, \Sigma, \delta, q_0, F)$, it provides an interactive environment where students and instructors can build automata through forms and an editable transition table, view them as a state diagram, and inspect deterministic string processing step-by-step.
 
 ---
 
@@ -121,7 +121,7 @@ DFA-Simulator/
 │   ├── validator.js        # Automata completeness and input string validator
 │   ├── simulator.js        # Deterministic simulation engine and trace logger
 │   ├── graph.js            # Interactive SVG state diagram and visual renderer
-│   ├── transitionTable.js  # Two-way synchronized transition matrix component
+│   ├── transitionTable.js  # Editable transition matrix (drop-downs write back to the model)
 │   └── main.js             # Application controller and UI event listeners
 ├── TestCases/
 │   ├── exhaustive_check.js # compares both presets with reference predicates on all 8,191 binary strings of length 0–12
@@ -135,7 +135,9 @@ DFA-Simulator/
 
 ## Testing
 
-The project includes an automated test runner covering preset simulations, edge cases, error diagnostics, and validator integrity. Run the test suite with Node.js:
+The project includes an automated test runner covering preset simulations, edge cases, error diagnostics, and validator integrity. Run all commands from the repository root.
+
+Run the test suite with Node.js:
 
 ```bash
 node test_dfa.js
@@ -200,9 +202,14 @@ TOTAL TESTS: 28 | PASSED: 28 | FAILED: 0
 ✅ ALL AUTOMATED TESTS PASSED SUCCESSFULLY!
 ```
 
-Exhaustive cross-check: `node TestCases/exhaustive_check.js`
+Exhaustive cross-check:
+
+```bash
+node TestCases/exhaustive_check.js
+```
 
 Expected output:
+
 ```
 ends-with-01: 8191 strings (|w| <= 12), mismatches = 0
 even-zeros: 8191 strings (|w| <= 12), mismatches = 0
@@ -224,6 +231,7 @@ RESULT: all verdicts agree with the reference predicates
 9. **Single-character check for alphabet symbols is applied in the interface layer, not in `DFA.setAlphabet`.**
 10. **State names are inserted with innerHTML without escaping.**
 11. **Some interface behaviours (dragging, Auto Layout, narrow screens, Firefox/Edge) have not yet been verified by manual tests.**
+12. **Whitespace trimming of the input string (leading/trailing blanks) is implemented but not yet covered by a manual interface test.**
 
 ---
 
