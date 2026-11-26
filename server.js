@@ -15,7 +15,7 @@ if (fs.existsSync(envFile)) {
 
 const PORT = Number(process.env.PORT) || 3000;
 const ROOT = __dirname;
-const MODEL = "llama-3.3-70b-versatile";
+const MODEL = "llama3-70b-8192";
 
 const promptFor = command => `Convert this natural-language request into a complete deterministic finite automaton.
 Return ONLY valid JSON, with exactly this shape:
