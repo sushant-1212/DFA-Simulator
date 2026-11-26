@@ -37,6 +37,13 @@
 
                 <!-- States Management (Q) -->
                 <div class="section-box">
+                    <div class="section-label"><span>✨ Generate with Groq</span></div>
+                    <input type="text" id="gemini-command" class="input-text" placeholder="e.g. strings ending in 01" style="margin-top:0.45rem;">
+                    <button id="btn-generate-dfa" class="btn-sm btn-primary-sm" style="width:100%; margin-top:0.45rem;">Generate DFA</button>
+                    <p id="gemini-status" style="font-size:0.725rem; color:var(--text-muted); margin-top:0.35rem;">Powered by the configured backend Groq key.</p>
+                </div>
+
+                <div class="section-box">
                     <div class="section-label">
                         <span>1. States (Q)</span>
                         <span id="state-count-badge" style="font-size: 0.75rem; color: var(--secondary); font-weight: normal;">0 states</span>
@@ -213,6 +220,7 @@
     <script src="js/simulator.js"></script>
     <script src="js/graph.js"></script>
     <script src="js/transitionTable.js"></script>
+    <script src="js/groq.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

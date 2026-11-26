@@ -47,6 +47,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnPreset01 = document.getElementById("btn-load-preset-01");
     const btnPresetEven = document.getElementById("btn-load-preset-even");
     const btnClearDFA = document.getElementById("btn-clear-dfa");
+    const elGeminiCommand = document.getElementById("gemini-command");
+    const btnGenerateDFA = document.getElementById("btn-generate-dfa");
+    const elGeminiStatus = document.getElementById("gemini-status");
+
+    btnGenerateDFA.addEventListener("click", async () => {
+        const command = elGeminiCommand.value.trim();
+        if (!command) { elGeminiStatus.textContent = "Enter a DFA command."; return; }
+        btnGenerateDFA.disabled = true;
+        elGeminiStatus.textContent = "Generating DFA…";
+        try {
+            const definition = await GroqDFA.generate(command);
+            dfa.loadDefinition(definition);
+            resetSimulation();
+            refreshAllUI(true);
+            elGeminiStatus.textContent = "DFA generated successfully.";
+        } catch (error) {
+            elGeminiStatus.textContent = error.message;
+        } finally { btnGenerateDFA.disabled = false; }
+    });
 
     // 3. Initialize Graph & Table Components
     graph = new DFAGraph(svgElem, dfa, (clickedState) => {
